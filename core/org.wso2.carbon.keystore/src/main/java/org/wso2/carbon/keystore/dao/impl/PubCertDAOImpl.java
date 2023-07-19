@@ -1,9 +1,8 @@
 package org.wso2.carbon.keystore.dao.impl;
 
 import org.wso2.carbon.database.utils.jdbc.NamedPreparedStatement;
-import org.wso2.carbon.keystore.dao.PubCertDAO;
 import org.wso2.carbon.keystore.dao.constants.PubCertDAOConstants;
-import org.wso2.carbon.keystore.dao.constants.PubCertDAOConstants.PubCertTableColumns;
+import org.wso2.carbon.keystore.dao.PubCertDAO;
 import org.wso2.carbon.keystore.exception.KeyStoreException;
 import org.wso2.carbon.keystore.model.PubCertModel;
 import org.wso2.carbon.keystore.util.KeyStoreDatabaseUtil;
@@ -52,15 +51,16 @@ public class PubCertDAOImpl extends PubCertDAO {
         try (Connection connection = KeyStoreDatabaseUtil.getDBConnection(false)) {
             try (NamedPreparedStatement statement = new NamedPreparedStatement(connection,
                     PubCertDAOConstants.SQLQueries.GET_PUB_CERT)) {
-                statement.setString(PubCertTableColumns.ID, uuid);
-                statement.setString(PubCertTableColumns.TENANT_UUID, tenantUUID);
+                statement.setString(PubCertDAOConstants.PubCertTableColumns.ID, uuid);
+                statement.setString(PubCertDAOConstants.PubCertTableColumns.TENANT_UUID, tenantUUID);
                 // T
                 statement.setMaxRows(1);
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         pubCertModel = new PubCertModel();
-                        pubCertModel.setFileNameAppender(resultSet.getString(PubCertTableColumns.FILE_NAME_APPENDER));
-                        pubCertModel.setContent(resultSet.getBytes(PubCertTableColumns.CONTENT));
+                        pubCertModel.setFileNameAppender(resultSet.getString(
+                                PubCertDAOConstants.PubCertTableColumns.FILE_NAME_APPENDER));
+                        pubCertModel.setContent(resultSet.getBytes(PubCertDAOConstants.PubCertTableColumns.CONTENT));
                     }
                 }
             } catch (SQLException e) {
@@ -79,8 +79,9 @@ public class PubCertDAOImpl extends PubCertDAO {
 
         try (NamedPreparedStatement statement = new NamedPreparedStatement(connection,
                 PubCertDAOConstants.SQLQueries.ADD_PUB_CERT)) {
-            statement.setString(PubCertTableColumns.ID, id);
-            statement.setString(PubCertTableColumns.FILE_NAME_APPENDER, pubCertModel.getFileNameAppender());
+            statement.setString(PubCertDAOConstants.PubCertTableColumns.ID, id);
+            statement.setString(
+                    PubCertDAOConstants.PubCertTableColumns.FILE_NAME_APPENDER, pubCertModel.getFileNameAppender());
             statement.setString("TENANT_UUID", tenantUUID);
             statement.setBytes(4, pubCertModel.getContent());
             statement.executeUpdate();
