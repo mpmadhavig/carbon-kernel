@@ -58,7 +58,6 @@ public class KeyStoreManager {
             new ConcurrentHashMap<String, KeyStoreManager>();
     private static Log log = LogFactory.getLog(KeyStoreManager.class);
 
-    private Registry registry = null;
     private KeyStoreDAO keyStoreDAO = null;
 
     private ConcurrentHashMap<String, KeyStoreBean> loadedKeyStores = null;
@@ -82,12 +81,7 @@ public class KeyStoreManager {
         loadedKeyStores = new ConcurrentHashMap<String, KeyStoreBean>();
         this.tenantId = tenantId;
         try {
-            registry = registryService.getGovernanceSystemRegistry(tenantId);
             keyStoreDAO = new KeyStoreDAOImpl(tenantId);
-        } catch (RegistryException e) {
-            String message = "Error when retrieving the system governance registry";
-            log.error(message, e);
-            throw new SecurityException(message, e);
         } catch (SecurityConfigException e) {
             String message = "Error when retrieving the key store DAO";
             log.error(message, e);
