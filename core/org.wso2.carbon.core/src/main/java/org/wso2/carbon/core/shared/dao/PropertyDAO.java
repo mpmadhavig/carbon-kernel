@@ -16,11 +16,11 @@
  * under the License.
  */
 
-package org.wso2.carbon.core.common.dao;
+package org.wso2.carbon.core.shared.dao;
 
 import org.wso2.carbon.CarbonException;
-import org.wso2.carbon.core.common.dao.models.PropertyName;
-import org.wso2.carbon.core.common.dao.models.PropertyValue;
+import org.wso2.carbon.core.shared.dao.models.PropertyName;
+import org.wso2.carbon.core.shared.dao.models.PropertyValue;
 
 public interface PropertyDAO {
 

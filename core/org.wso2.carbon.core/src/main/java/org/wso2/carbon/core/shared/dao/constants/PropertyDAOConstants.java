@@ -16,12 +16,14 @@
  * under the License.
  */
 
-package org.wso2.carbon.core.common.dao.constants;
+package org.wso2.carbon.core.shared.dao.constants;
 
 /**
  * Constants related to the PropertyDAO.
  */
 public class PropertyDAOConstants {
+
+    public static final String PROPERTY_VALUE_DATASOURCE = "jdbc/SHARED_DB";
 
     private PropertyDAOConstants() {
 

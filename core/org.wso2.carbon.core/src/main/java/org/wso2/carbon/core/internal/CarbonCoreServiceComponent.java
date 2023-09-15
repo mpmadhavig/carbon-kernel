@@ -25,6 +25,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.http.HttpService;
+import org.wso2.carbon.CarbonException;
+import org.wso2.carbon.base.ServerConfiguration;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.context.CarbonCoreInitializedEvent;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -32,20 +34,26 @@ import org.wso2.carbon.core.ServerRestartHandler;
 import org.wso2.carbon.core.ServerShutdownHandler;
 import org.wso2.carbon.core.ServerStartupHandler;
 import org.wso2.carbon.core.ServerStartupObserver;
+import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import org.wso2.carbon.core.encryption.KeyStoreBasedExternalCryptoProvider;
+import org.wso2.carbon.core.encryption.SymmetricEncryption;
 import org.wso2.carbon.core.init.CarbonServerManager;
 import org.wso2.carbon.crypto.api.CryptoService;
 import org.wso2.carbon.crypto.api.ExternalCryptoProvider;
-import org.wso2.carbon.crypto.api.InternalCryptoProvider;
 import org.wso2.carbon.registry.core.service.RegistryService;
 import org.wso2.carbon.registry.core.service.TenantRegistryLoader;
 import org.wso2.carbon.user.core.service.RealmService;
-import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
-import org.wso2.carbon.core.encryption.SymmetricEncryption;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+import static org.wso2.carbon.core.shared.dao.constants.PropertyDAOConstants.PROPERTY_VALUE_DATASOURCE;
 
 @Component(name="carbon.core.dscomponent", immediate=true)
 public class CarbonCoreServiceComponent {
@@ -68,6 +76,9 @@ public class CarbonCoreServiceComponent {
     @Activate
     protected void activate(ComponentContext ctxt) {
         try {
+            // Read common property table datasource and initialize.
+            initCommonPropertyDataSource();
+
             // for new caching, every thread should has its own populated CC. During the deployment time we assume super tenant
             PrivilegedCarbonContext carbonContext = PrivilegedCarbonContext.getThreadLocalCarbonContext();
             carbonContext.setTenantDomain(org.wso2.carbon.base.MultitenantConstants.SUPER_TENANT_DOMAIN_NAME);
@@ -273,4 +284,18 @@ public class CarbonCoreServiceComponent {
     @Reference(name = "carbonCoreInitializedEventService", cardinality = ReferenceCardinality.MANDATORY, 
             policy = ReferencePolicy.DYNAMIC, unbind = "unsetCarbonCoreInitializedEventService")
     protected void setCarbonCoreInitializedEventService(CarbonCoreInitializedEvent carbonCoreInitializedEventService){}
+
+    private void initCommonPropertyDataSource() throws CarbonException {
+
+        String dataSourceName = ServerConfiguration.getInstance()
+                .getFirstProperty(PROPERTY_VALUE_DATASOURCE);
+        Context ctx = null;
+        try {
+            ctx = new InitialContext();
+            DataSource dataSource = (DataSource) ctx.lookup(dataSourceName);
+            CarbonCoreDataHolder.getInstance().setCommonPropertyDataSource(dataSource);
+        } catch (NamingException e) {
+            throw new CarbonException(e.getMessage());
+        }
+    }
 }

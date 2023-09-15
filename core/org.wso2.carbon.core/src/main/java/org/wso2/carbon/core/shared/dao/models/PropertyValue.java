@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.core.common.dao.models;
+package org.wso2.carbon.core.shared.dao.models;
 
 import java.util.Date;
 

@@ -31,6 +31,8 @@ import org.wso2.carbon.core.clustering.api.CoordinatedActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 /**
  * This singleton data holder contains all the data required by the Carbon core OSGi bundle
  */
@@ -49,6 +51,7 @@ public class CarbonCoreDataHolder {
 
     private List<CoordinatedActivity> coordinatedActivities = new ArrayList<CoordinatedActivity>() ;
     private CryptoService cryptoService;
+    private DataSource commonPropertyDataSource;
 
     public  static CarbonCoreDataHolder getInstance() {
         return instance;
@@ -165,5 +168,15 @@ public class CarbonCoreDataHolder {
     public CryptoService getCryptoService() {
 
         return cryptoService;
+    }
+
+    public DataSource getCommonPropertyDataSource() {
+
+        return commonPropertyDataSource;
+    }
+
+    public void setCommonPropertyDataSource(DataSource commonPropertyDataSource) {
+
+        this.commonPropertyDataSource = commonPropertyDataSource;
     }
 }

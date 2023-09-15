@@ -16,14 +16,15 @@
  * under the License.
  */
 
-package org.wso2.carbon.core.common.dao.impl;
+package org.wso2.carbon.core.shared.dao.impl;
 
 import org.wso2.carbon.CarbonException;
-import org.wso2.carbon.core.common.dao.PropertyDAO;
-import org.wso2.carbon.core.common.dao.constants.PropertyDAOConstants;
-import org.wso2.carbon.core.common.dao.constants.PropertyDAOConstants.PropertyTableColumns;
-import org.wso2.carbon.core.common.dao.models.PropertyName;
-import org.wso2.carbon.core.common.dao.models.PropertyValue;
+import org.wso2.carbon.core.internal.CarbonCoreDataHolder;
+import org.wso2.carbon.core.shared.dao.PropertyDAO;
+import org.wso2.carbon.core.shared.dao.constants.PropertyDAOConstants;
+import org.wso2.carbon.core.shared.dao.constants.PropertyDAOConstants.PropertyTableColumns;
+import org.wso2.carbon.core.shared.dao.models.PropertyName;
+import org.wso2.carbon.core.shared.dao.models.PropertyValue;
 import org.wso2.carbon.database.utils.jdbc.NamedPreparedStatement;
 import org.wso2.carbon.user.core.util.DatabaseUtil;
 
@@ -36,6 +37,8 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import javax.sql.DataSource;
+
 import static java.time.ZoneOffset.UTC;
 
 /**
@@ -43,7 +46,7 @@ import static java.time.ZoneOffset.UTC;
  */
 public class PropertyDAOImpl implements PropertyDAO {
 
-    // todo : datasource?
+    private final DataSource propertyValueDataSource = CarbonCoreDataHolder.getInstance().getCommonPropertyDataSource();
     private final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone(UTC));
 
     /**
@@ -52,7 +55,7 @@ public class PropertyDAOImpl implements PropertyDAO {
     @Override
     public void addProperty(PropertyValue propertyValue) throws CarbonException {
 
-        try (Connection connection = DatabaseUtil.getDBConnection(null)) {
+        try (Connection connection = DatabaseUtil.getDBConnection(propertyValueDataSource)) {
             try {
                 persistProperty(connection, propertyValue);
                 connection.commit();
@@ -72,7 +75,7 @@ public class PropertyDAOImpl implements PropertyDAO {
     public PropertyValue getProperty(String tenantUUID, PropertyName name) throws CarbonException {
 
         PropertyValue propertyValue = null;
-        try (Connection connection = DatabaseUtil.getDBConnection(null)) {
+        try (Connection connection = DatabaseUtil.getDBConnection(propertyValueDataSource)) {
             try {
                 propertyValue = retrieveProperty(connection, tenantUUID, name);
                 connection.commit();
@@ -92,7 +95,7 @@ public class PropertyDAOImpl implements PropertyDAO {
     @Override
     public void updateProperty(PropertyValue propertyValue) throws CarbonException {
 
-        try (Connection connection = DatabaseUtil.getDBConnection(null)) {
+        try (Connection connection = DatabaseUtil.getDBConnection(propertyValueDataSource)) {
             try {
                 persistUpdateProperty(connection, propertyValue);
                 connection.commit();

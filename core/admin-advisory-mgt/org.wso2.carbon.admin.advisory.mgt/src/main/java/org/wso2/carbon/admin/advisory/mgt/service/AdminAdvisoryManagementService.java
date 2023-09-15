@@ -26,9 +26,9 @@ import org.wso2.carbon.admin.advisory.mgt.dto.AdminAdvisoryBannerDTO;
 import org.wso2.carbon.admin.advisory.mgt.exception.AdminAdvisoryMgtException;
 import org.wso2.carbon.admin.advisory.mgt.util.AdminAdvisoryUtil;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.core.common.dao.impl.PropertyDAOImpl;
-import org.wso2.carbon.core.common.dao.models.PropertyName;
-import org.wso2.carbon.core.common.dao.models.PropertyValue;
+import org.wso2.carbon.core.shared.dao.impl.PropertyDAOImpl;
+import org.wso2.carbon.core.shared.dao.models.PropertyName;
+import org.wso2.carbon.core.shared.dao.models.PropertyValue;
 
 /**
  * This service is to configure the Admin Advisory Management functionality.
